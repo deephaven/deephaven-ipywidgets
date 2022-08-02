@@ -93,7 +93,7 @@ setup_args = dict(
     python_requires=">=3.6",
     install_requires = [
         'ipywidgets>=7.0.0',
-        'deephaven_server>=0.15.0'
+        'deephaven-server>=0.15.0'
     ],
     extras_require = {
         'test': [
