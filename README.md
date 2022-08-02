@@ -59,7 +59,7 @@ export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-11.jdk/Contents/Home
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip setuptools
-pip install deephaven_server jupyter jupyterlab jupyter-packaging
+pip install deephaven-server jupyter jupyterlab jupyter-packaging
 ```
 
 After initial installation/creation, you can just do
@@ -85,8 +85,8 @@ yarn run build
 For classic notebook, you need to run:
 
 ```
-jupyter nbextension install --sys-prefix --symlink --overwrite --py deephaven_ipywidgets
-jupyter nbextension enable --sys-prefix --py deephaven_ipywidgets
+jupyter nbextension install --sys-prefix --symlink --overwrite --py deephaven-ipywidgets
+jupyter nbextension enable --sys-prefix --py deephaven-ipywidgets
 ```
 
 Note that the `--symlink` flag doesn't work on Windows, so you will here have to run
@@ -124,3 +124,32 @@ After a change wait for the build to finish and then refresh your browser and th
 #### Python:
 
 If you make a change to the python code then you will need to restart the notebook kernel to have it take effect.
+
+## Releasing your initial packages:
+
+- Add tests
+- Ensure tests pass locally and on CI. Check that the coverage is reasonable.
+- Make a release commit, where you remove the `, 'dev'` entry in `_version.py`.
+- Update the version in `package.json`
+- Relase the npm packages:
+  ```bash
+  npm login
+  npm publish
+  ```
+- Install publish dependencies:
+
+```bash
+pip install build twine
+```
+
+- Build the assets and publish
+  ```bash
+  python -m build .
+  twine check dist/*
+  twine upload dist/*
+  ```
+- Tag the release commit (`git tag <python package version identifier>`)
+- Update the version in `_version.py`, and put it back to dev (e.g. 0.1.0 -> 0.2.0.dev).
+  Update the versions of the npm packages (without publishing).
+- Commit the changes.
+- `git push` and `git push --tags`.
