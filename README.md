@@ -37,6 +37,7 @@ Pass the table into a `DeephavenWidget` to display a table:
 ```python
 # Create a table and display it
 from deephaven import empty_table
+from deephaven_ipywidgets import DeephavenWidget
 t = empty_table(1000).update("x=i")
 display(DeephavenWidget(t))
 ```
