@@ -85,8 +85,8 @@ yarn run build
 For classic notebook, you need to run:
 
 ```
-jupyter nbextension install --sys-prefix --symlink --overwrite --py deephaven-ipywidgets
-jupyter nbextension enable --sys-prefix --py deephaven-ipywidgets
+jupyter nbextension install --sys-prefix --symlink --overwrite --py deephaven_ipywidgets
+jupyter nbextension enable --sys-prefix --py deephaven_ipywidgets
 ```
 
 Note that the `--symlink` flag doesn't work on Windows, so you will here have to run
