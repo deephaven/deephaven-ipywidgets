@@ -8,19 +8,14 @@ import { createTestModel } from './utils';
 
 import { DeephavenModel } from '..';
 
-describe('Example', () => {
+describe('Basic Tests', () => {
   describe('DeephavenModel', () => {
-    it('should be createable', () => {
-      const model = createTestModel(DeephavenModel);
-      expect(model).toBeInstanceOf(DeephavenModel);
-      expect(model.get('value')).toEqual('Hello World');
-    });
-
     it('should be createable with a value', () => {
-      const state = { value: 'Foo Bar!' };
+      const iframeUrl = 'http://localhost:8080/test';
+      const state = { iframe_url: iframeUrl };
       const model = createTestModel(DeephavenModel, state);
       expect(model).toBeInstanceOf(DeephavenModel);
-      expect(model.get('value')).toEqual('Foo Bar!');
+      expect(model.get('iframe_url')).toEqual(iframeUrl);
     });
   });
 });
