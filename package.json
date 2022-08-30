@@ -1,6 +1,6 @@
 {
   "name": "deephaven-ipywidgets",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deephaven ipython widget library",
   "keywords": [
     "ipywidgets",
