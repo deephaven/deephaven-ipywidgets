@@ -24,8 +24,10 @@ def _path_for_object(obj):
   name = _str_object_type(obj)
   if name == 'deephaven.table.Table':
     return 'table'
+  if name == 'deephaven.figure.Figure':
+    return 'chart'
   # TODO: Add more types (after embedded Figure support in iframes)
-  raise TypeError("Unknown object type")
+  raise TypeError(f"Unknown object type: {name}")
 
 
 class DeephavenWidget(DOMWidget):
