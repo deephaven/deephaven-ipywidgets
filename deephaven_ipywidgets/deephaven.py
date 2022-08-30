@@ -24,9 +24,8 @@ def _path_for_object(obj):
   name = _str_object_type(obj)
   if name == 'deephaven.table.Table':
     return 'table'
-  if name == 'deephaven.figure.Figure':
+  if name == 'deephaven.plot.figure.Figure':
     return 'chart'
-  # TODO: Add more types (after embedded Figure support in iframes)
   raise TypeError(f"Unknown object type: {name}")
 
 
