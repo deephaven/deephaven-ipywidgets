@@ -1,6 +1,6 @@
 {
   "name": "@deephaven/ipywidgets",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deephaven ipython widget library",
   "keywords": [
     "ipywidgets",
@@ -106,5 +106,8 @@
       }
     }
   },
-  "prettier": "@deephaven/prettier-config"
+  "prettier": "@deephaven/prettier-config",
+  "publishConfig": {
+    "access": "public"
+  }
 }
