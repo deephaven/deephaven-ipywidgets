@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
 
 jobs:
   build:
@@ -31,8 +32,23 @@ jobs:
       
       - name: Test the extension
         run: |
-          python -m pip install --upgrade -v -e ".[test, examples, docs]"
+          pip install --upgrade -v -e ".[test, examples, docs]"
           yarn run lint:check
 
           pytest
           yarn run test
+
+      - name: Build wheel
+        run: python -m build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        with:
+          user: __token__
+          password: ${{ secrets.DEEPHAVENIPYWIDGETS_PYPI_TOKEN }}
