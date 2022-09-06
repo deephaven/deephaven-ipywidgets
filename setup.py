@@ -49,8 +49,8 @@ package_data_spec = {
 
 data_files_spec = [
     ('share/jupyter/nbextensions/deephaven_ipywidgets', 'deephaven_ipywidgets/nbextension', '**'),
-    ('share/jupyter/labextensions/deephaven-ipywidgets', 'deephaven_ipywidgets/labextension', '**'),
-    ('share/jupyter/labextensions/deephaven-ipywidgets', '.', 'install.json'),
+    ('share/jupyter/labextensions/@deephaven/ipywidgets', 'deephaven_ipywidgets/labextension', '**'),
+    ('share/jupyter/labextensions/@deephaven/ipywidgets', '.', 'install.json'),
     ('etc/jupyter/nbconfig/notebook.d', '.', 'deephaven_ipywidgets.json'),
 ]
 

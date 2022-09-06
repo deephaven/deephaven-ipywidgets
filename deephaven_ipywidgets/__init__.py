@@ -21,7 +21,7 @@ def _jupyter_labextension_paths():
     """
     return [{
         'src': 'labextension',
-        'dest': 'deephaven-ipywidgets',
+        'dest': '@deephaven/ipywidgets',
     }]
 
 

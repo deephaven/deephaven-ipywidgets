@@ -1,5 +1,5 @@
 {
-  "name": "deephaven-ipywidgets",
+  "name": "@deephaven/ipywidgets",
   "version": "0.1.1",
   "description": "Deephaven ipython widget library",
   "keywords": [
