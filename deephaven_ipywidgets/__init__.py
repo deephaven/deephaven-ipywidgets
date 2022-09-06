@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Mike Bender.
+# Copyright (c) Deephaven Data Labs LLC.
 # Distributed under the terms of the Modified BSD License.
 
 from .deephaven import DeephavenWidget
@@ -21,7 +21,7 @@ def _jupyter_labextension_paths():
     """
     return [{
         'src': 'labextension',
-        'dest': 'deephaven-ipywidgets',
+        'dest': '@deephaven/ipywidgets',
     }]
 
 

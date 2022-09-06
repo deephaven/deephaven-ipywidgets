@@ -49,8 +49,8 @@ package_data_spec = {
 
 data_files_spec = [
     ('share/jupyter/nbextensions/deephaven_ipywidgets', 'deephaven_ipywidgets/nbextension', '**'),
-    ('share/jupyter/labextensions/deephaven-ipywidgets', 'deephaven_ipywidgets/labextension', '**'),
-    ('share/jupyter/labextensions/deephaven-ipywidgets', '.', 'install.json'),
+    ('share/jupyter/labextensions/@deephaven/ipywidgets', 'deephaven_ipywidgets/labextension', '**'),
+    ('share/jupyter/labextensions/@deephaven/ipywidgets', '.', 'install.json'),
     ('etc/jupyter/nbconfig/notebook.d', '.', 'deephaven_ipywidgets.json'),
 ]
 
@@ -71,8 +71,8 @@ setup_args = dict(
     scripts         = glob(pjoin('scripts', '*')),
     cmdclass        = cmdclass,
     packages        = find_packages(),
-    author          = 'Mike Bender',
-    author_email    = 'mikebender@deephaven.io',
+    author          = 'Deephaven Data Labs LLC',
+    author_email    = 'operations@deephaven.io',
     url             = 'https://github.com/deephaven/deephaven-ipywidgets',
     license         = 'BSD',
     platforms       = "Linux, Mac OS X, Windows",
@@ -93,7 +93,7 @@ setup_args = dict(
     python_requires=">=3.6",
     install_requires = [
         'ipywidgets>=7.0.0',
-        'deephaven-server>=0.15.0'
+        'deephaven-server>=0.16.0'
     ],
     extras_require = {
         'test': [

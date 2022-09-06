@@ -1,4 +1,4 @@
-// Copyright (c) Mike Bender
+// Copyright (c) Deephaven Data Labs LLC
 // Distributed under the terms of the Modified BSD License.
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -13,7 +13,7 @@ import * as widgetExports from './widget';
 
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
-const EXTENSION_ID = 'deephaven-ipywidgets:plugin';
+const EXTENSION_ID = '@deephaven/ipywidgets:plugin';
 
 /**
  * The example plugin.

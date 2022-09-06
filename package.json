@@ -1,5 +1,5 @@
 {
-  "name": "deephaven-ipywidgets",
+  "name": "@deephaven/ipywidgets",
   "version": "0.1.0",
   "description": "Deephaven ipython widget library",
   "keywords": [
@@ -20,8 +20,8 @@
   },
   "license": "BSD-3-Clause",
   "author": {
-    "name": "Mike Bender",
-    "email": "mikebender@deephaven.io"
+    "name": "Deephaven Data Labs LLC",
+    "email": "operations@deephaven.io"
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",

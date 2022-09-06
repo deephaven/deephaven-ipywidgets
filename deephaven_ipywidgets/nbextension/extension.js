@@ -6,7 +6,7 @@ define(function () {
   window['requirejs'].config({
     map: {
       '*': {
-        'deephaven-ipywidgets': 'nbextensions/deephaven_ipywidgets/index',
+        '@deephaven/ipywidgets': 'nbextensions/deephaven_ipywidgets/index',
       },
     },
   });

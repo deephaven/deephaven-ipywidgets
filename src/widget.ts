@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable max-classes-per-file */
-// Copyright (c) Mike Bender
+// Copyright (c) Deephaven Data Labs LLC
 // Distributed under the terms of the Modified BSD License.
 
 import {

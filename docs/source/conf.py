@@ -59,8 +59,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'deephaven_ipywidgets'
-copyright = '2022, Mike Bender'
-author = 'Mike Bender'
+copyright = '2022, Deephaven Data Labs LLC'
+author = 'Deephaven Data Labs LLC'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -148,7 +148,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'deephaven_ipywidgets.tex', 'deephaven_ipywidgets Documentation',
-     'Mike Bender', 'manual'),
+     'Deephaven Data Labs LLC', 'manual'),
 ]
 
 
