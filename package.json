@@ -20,8 +20,8 @@
   },
   "license": "BSD-3-Clause",
   "author": {
-    "name": "Mike Bender",
-    "email": "mikebender@deephaven.io"
+    "name": "Deephaven Data Labs LLC",
+    "email": "operations@deephaven.io"
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
