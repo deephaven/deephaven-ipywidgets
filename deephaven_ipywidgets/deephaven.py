@@ -22,7 +22,8 @@ def _str_object_type(obj):
 def _path_for_object(obj):
   """Return the iframe path for the specified object. Inspects the class name to determine."""
   name = _str_object_type(obj)
-  if name == 'deephaven.table.Table':
+
+  if name in ('deephaven.table.Table', 'pandas.core.frame.DataFrame'):
     return 'table'
   if name == 'deephaven.plot.figure.Figure':
     return 'chart'
