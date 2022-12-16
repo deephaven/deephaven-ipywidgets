@@ -15,19 +15,21 @@ from deephaven_server import Server
 from uuid import uuid4
 from ._frontend import module_name, module_version
 
+
 def _str_object_type(obj):
-  """Returns the object type as a string value"""
-  return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+    """Returns the object type as a string value"""
+    return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+
 
 def _path_for_object(obj):
-  """Return the iframe path for the specified object. Inspects the class name to determine."""
-  name = _str_object_type(obj)
+    """Return the iframe path for the specified object. Inspects the class name to determine."""
+    name = _str_object_type(obj)
 
-  if name in ('deephaven.table.Table', 'pandas.core.frame.DataFrame'):
-    return 'table'
-  if name == 'deephaven.plot.figure.Figure':
-    return 'chart'
-  raise TypeError(f"Unknown object type: {name}")
+    if name in ('deephaven.table.Table', 'pandas.core.frame.DataFrame'):
+        return 'table'
+    if name == 'deephaven.plot.figure.Figure':
+        return 'chart'
+    raise TypeError(f"Unknown object type: {name}")
 
 
 class DeephavenWidget(DOMWidget):
@@ -60,9 +62,17 @@ class DeephavenWidget(DOMWidget):
         # Generate a new table ID using a UUID prepended with a `t_` prefix
         object_id = f"t_{str(uuid4()).replace('-', '_')}"
 
+        port = Server.instance.port
+        server_url = f"http://localhost:{Server.instance.port}/"
+
+        try:
+            from google.colab.output import eval_js
+            server_url = eval_js(f"google.colab.kernel.proxyPort({port})")
+        except ImportError:
+            pass
+
         # Generate the iframe_url from the object type
-        server_url = f"http://localhost:{Server.instance.port}"
-        iframe_url = f"{server_url}/iframe/{_path_for_object(deephaven_object)}/?name={object_id}"
+        iframe_url = f"{server_url}iframe/{_path_for_object(deephaven_object)}/?name={object_id}"
 
         # Add the table to the main modules globals list so it can be retrieved by the iframe
         __main__.__dict__[object_id] = deephaven_object
