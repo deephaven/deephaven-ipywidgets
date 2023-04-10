@@ -14,7 +14,7 @@ from traitlets import Unicode, Integer
 from deephaven_server import Server
 from uuid import uuid4
 from ._frontend import module_name, module_version
-
+import os
 
 def _str_object_type(obj):
     """Returns the object type as a string value"""
@@ -63,13 +63,20 @@ class DeephavenWidget(DOMWidget):
         object_id = f"t_{str(uuid4()).replace('-', '_')}"
 
         port = Server.instance.port
+
         server_url = f"http://localhost:{Server.instance.port}/"
+
+        if "DEEPHAVEN_IPY_URL" in os.environ:
+            server_url = os.environ["DEEPHAVEN_IPY_URL"]
 
         try:
             from google.colab.output import eval_js
             server_url = eval_js(f"google.colab.kernel.proxyPort({port})")
         except ImportError:
             pass
+
+        if not server_url.endswith("/"):
+            server_url = f"{server_url}/"
 
         # Generate the iframe_url from the object type
         iframe_url = f"{server_url}iframe/{_path_for_object(deephaven_object)}/?name={object_id}"
