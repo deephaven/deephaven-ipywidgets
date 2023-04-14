@@ -47,6 +47,9 @@ jobs:
           path: dist/
           if-no-files-found: error
 
+      - name: Remove files not needed for pypi
+        run: rm dist/index.js*
+
       - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         with:
