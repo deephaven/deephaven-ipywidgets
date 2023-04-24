@@ -49,6 +49,12 @@ You can also pass in the size you would like the widget to be:
 display(DeephavenWidget(t, width=100, height=250))
 ```
 
+### Alternate Deephaven Server URL
+By default, the Deephaven server is located at `http://localhost:{port}`, where `{port}` is the port set in the Deephaven server creation call. If the server is not there, such as when runnning a Jupyter notebook in a Docker container, modify the `DEEPHAVEN_IPY_URL` environmental variable to the correct URL before creating a `DeephavenWidget`. 
+```python
+import os 
+os.environ["DEEPHAVEN_IPY_URL"] = "http://localhost:1234"
+```
 ## Development Installation
 
 Before starting, you will need [python3](https://www.python.org/downloads/), [node](https://nodejs.org/en/download/), and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) installed.
