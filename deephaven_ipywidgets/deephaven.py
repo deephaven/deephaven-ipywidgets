@@ -10,11 +10,14 @@ Module for displaying Deephaven widgets within interactive python environments.
 
 import __main__
 from ipywidgets import DOMWidget
-from traitlets import Unicode, Integer
+from traitlets import Unicode, Integer, Bytes
 from deephaven_server import Server
 from uuid import uuid4
 from ._frontend import module_name, module_version
 import os
+import base64
+import json
+
 
 def _str_object_type(obj):
     """Returns the object type as a string value"""
@@ -25,11 +28,12 @@ def _path_for_object(obj):
     """Return the iframe path for the specified object. Inspects the class name to determine."""
     name = _str_object_type(obj)
 
-    if name in ('deephaven.table.Table', 'pandas.core.frame.DataFrame'):
+    if name in ('deephaven.table.Table', 'pandas.core.frame.DataFrame', 'pydeephaven.table.Table'):
         return 'table'
     if name == 'deephaven.plot.figure.Figure':
         return 'chart'
     raise TypeError(f"Unknown object type: {name}")
+
 
 
 class DeephavenWidget(DOMWidget):
@@ -48,6 +52,7 @@ class DeephavenWidget(DOMWidget):
     iframe_url = Unicode().tag(sync=True)
     width = Integer().tag(sync=True)
     height = Integer().tag(sync=True)
+    token = Unicode().tag(sync=True)
 
     def __init__(self, deephaven_object, height=600, width=0):
         """Create a Deephaven widget for displaying in an interactive Python console.
@@ -62,9 +67,37 @@ class DeephavenWidget(DOMWidget):
         # Generate a new table ID using a UUID prepended with a `t_` prefix
         object_id = f"t_{str(uuid4()).replace('-', '_')}"
 
-        port = Server.instance.port
+        params = {
+            "name": object_id
+        }
 
-        server_url = f"http://localhost:{Server.instance.port}/"
+        token = ''
+
+        if _str_object_type(deephaven_object) == 'pydeephaven.table.Table':
+            session = deephaven_object.session
+
+            envoy_prefix = session._extra_headers[
+                b'envoy-prefix'].decode('ascii')
+
+            token = base64.b64encode(
+                session.session_manager.auth_client.get_token("RemoteQueryProcessor").SerializeToString()
+            ).decode('us-ascii')
+
+            params.update({
+                "authProvider": "parent",
+                "envoyPrefix": envoy_prefix
+            })
+
+            port = deephaven_object.session.port
+            server_url = f"https://{deephaven_object.session.host}:{port}"
+
+            session.bind_table(object_id, deephaven_object)
+        else:
+            port = Server.instance.port
+            server_url = f"http://localhost:{port}/"
+
+        param_values = [f"{k}={v}" for k, v in params.items()]
+        param_string = "?" + "&".join(param_values)
 
         if "DEEPHAVEN_IPY_URL" in os.environ:
             server_url = os.environ["DEEPHAVEN_IPY_URL"]
@@ -79,8 +112,7 @@ class DeephavenWidget(DOMWidget):
             server_url = f"{server_url}/"
 
         # Generate the iframe_url from the object type
-        iframe_url = f"{server_url}iframe/{_path_for_object(deephaven_object)}/?name={object_id}"
-
+        iframe_url = f"{server_url}iframe/{_path_for_object(deephaven_object)}/{param_string}"
         # Add the table to the main modules globals list so it can be retrieved by the iframe
         __main__.__dict__[object_id] = deephaven_object
 
@@ -90,3 +122,4 @@ class DeephavenWidget(DOMWidget):
         self.set_trait('object_type', _str_object_type(deephaven_object))
         self.set_trait('width', width)
         self.set_trait('height', height)
+        self.set_trait('token', token)

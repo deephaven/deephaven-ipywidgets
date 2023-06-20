@@ -8,6 +8,11 @@ import {
   DOMWidgetView,
   ISerializers,
 } from '@jupyter-widgets/base';
+import {
+  isMessage,
+  LOGIN_OPTIONS_REQUEST,
+  makeResponse,
+} from '@deephaven/jsapi-utils';
 import Log from '@deephaven/log';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 
@@ -51,11 +56,64 @@ export class DeephavenModel extends DOMWidgetModel {
 export class DeephavenView extends DOMWidgetView {
   private iframe: HTMLIFrameElement;
 
+  sendAuthenticationResponse = (
+    messageId: string,
+    source: WindowProxy,
+    url: string
+  ): void => {
+    const token = this.model.get('token');
+
+    log.info(token);
+
+    const payload = {
+      type: 'io.deephaven.proto.auth.Token',
+      token,
+    };
+
+    try {
+      log.info('Sending login options to iframe', url);
+      source.postMessage(makeResponse(messageId, payload), url);
+    } catch (e) {
+      log.error(e);
+    }
+  };
+
+  handleAuthentication = (event: MessageEvent<unknown>): void => {
+    const { data, source, origin } = event;
+
+    if (
+      source == null ||
+      source instanceof MessagePort ||
+      source instanceof ServiceWorker
+    ) {
+      log.debug('Ignore message, invalid event source', source);
+      return;
+    }
+
+    if (!isMessage(data)) {
+      log.debug('Ignore unsupported message', data);
+      return;
+    }
+
+    switch (data.message) {
+      case LOGIN_OPTIONS_REQUEST:
+        window.removeEventListener('message', this.handleAuthentication);
+        this.sendAuthenticationResponse(data.id, source, origin);
+        break;
+      default: {
+        log.debug('Ignore unsupported message', data.message);
+      }
+    }
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render(): any {
     const iframeUrl = this.model.get('iframe_url');
     const width = this.model.get('width');
     const height = this.model.get('height');
+
+    window.addEventListener('message', this.handleAuthentication);
+
     log.info('init_element for widget', iframeUrl, width, height);
 
     this.iframe = document.createElement('iframe');
