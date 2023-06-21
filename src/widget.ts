@@ -58,12 +58,10 @@ export class DeephavenView extends DOMWidgetView {
 
   sendAuthenticationResponse = (
     messageId: string,
-    source: WindowProxy,
+    childWindow: WindowProxy,
     url: string
   ): void => {
     const token = this.model.get('token');
-
-    log.info(token);
 
     const payload = {
       type: 'io.deephaven.proto.auth.Token',
@@ -72,7 +70,7 @@ export class DeephavenView extends DOMWidgetView {
 
     try {
       log.info('Sending login options to iframe', url);
-      source.postMessage(makeResponse(messageId, payload), url);
+      childWindow.postMessage(makeResponse(messageId, payload), url);
     } catch (e) {
       log.error(e);
     }
@@ -84,7 +82,8 @@ export class DeephavenView extends DOMWidgetView {
     if (
       source == null ||
       source instanceof MessagePort ||
-      source instanceof ServiceWorker
+      source instanceof ServiceWorker ||
+      source !== this.iframe.contentWindow
     ) {
       log.debug('Ignore message, invalid event source', source);
       return;
@@ -97,7 +96,6 @@ export class DeephavenView extends DOMWidgetView {
 
     switch (data.message) {
       case LOGIN_OPTIONS_REQUEST:
-        window.removeEventListener('message', this.handleAuthentication);
         this.sendAuthenticationResponse(data.id, source, origin);
         break;
       default: {
@@ -112,7 +110,7 @@ export class DeephavenView extends DOMWidgetView {
     const width = this.model.get('width');
     const height = this.model.get('height');
 
-    window.addEventListener('message', this.handleAuthentication);
+    window.addEventListener('message', (event) => this.handleAuthentication(event));
 
     log.info('init_element for widget', iframeUrl, width, height);
 
