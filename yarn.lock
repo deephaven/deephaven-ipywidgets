@@ -3761,14 +3761,6 @@
     "eslint-utils" "^2.0.0"
     "regexpp" "^3.0.0"
 
-"eslint-plugin-flowtype@^5.2.0":
-  "integrity" "sha512-vcz32f+7TP+kvTUyMXZmCnNujBQZDNmcqPImw8b9PZ+16w1Qdm6ryRuYZYVaG9xRqqmAPr2Cs9FAX5gN+x/bjw=="
-  "resolved" "https://registry.npmjs.org/eslint-plugin-flowtype/-/eslint-plugin-flowtype-5.10.0.tgz"
-  "version" "5.10.0"
-  dependencies:
-    "lodash" "^4.17.15"
-    "string-natural-compare" "^3.0.1"
-
 "eslint-plugin-flowtype@^8.0.3":
   "integrity" "sha512-dX8l6qUL6O+fYPtpNRideCFSpmWOUVx5QcaGLVqe/vlDiBSe4vYljDWDETwnyFzpl7By/WVIu6rcrniCgH9BqQ=="
   "resolved" "https://registry.npmjs.org/eslint-plugin-flowtype/-/eslint-plugin-flowtype-8.0.3.tgz"
@@ -3909,7 +3901,7 @@
   "resolved" "https://registry.npmjs.org/eslint-visitor-keys/-/eslint-visitor-keys-3.4.1.tgz"
   "version" "3.4.1"
 
-"eslint@*", "eslint@^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8", "eslint@^3 || ^4 || ^5 || ^6 || ^7 || ^8", "eslint@^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0", "eslint@^6.0.0 || ^7.0.0 || ^8.0.0", "eslint@^6.0.0 || ^7.0.0 || >=8.0.0", "eslint@^7.1.0", "eslint@^7.32.0 || ^8.2.0", "eslint@^7.5.0 || ^8.0.0", "eslint@^8.0.0", "eslint@^8.1.0", "eslint@^8.29.0", "eslint@>= 4.12.1", "eslint@>=3.14.1", "eslint@>=4.19.1", "eslint@>=5.0.0", "eslint@>=7", "eslint@>=7.0.0":
+"eslint@*", "eslint@^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8", "eslint@^3 || ^4 || ^5 || ^6 || ^7 || ^8", "eslint@^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0", "eslint@^6.0.0 || ^7.0.0 || ^8.0.0", "eslint@^6.0.0 || ^7.0.0 || >=8.0.0", "eslint@^7.32.0 || ^8.2.0", "eslint@^7.5.0 || ^8.0.0", "eslint@^8.0.0", "eslint@^8.1.0", "eslint@^8.29.0", "eslint@>= 4.12.1", "eslint@>=3.14.1", "eslint@>=4.19.1", "eslint@>=5.0.0", "eslint@>=7", "eslint@>=7.0.0":
   "integrity" "sha512-aaCpf2JqqKesMFGgmRPessmVKjcGXqdlAYLLC3THM8t5nBRZRQ+st5WM/hoJXkdioEXLLbXgclUpM0TXo5HX5Q=="
   "resolved" "https://registry.npmjs.org/eslint/-/eslint-8.43.0.tgz"
   "version" "8.43.0"
@@ -5695,7 +5687,7 @@
   "resolved" "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.2.tgz"
   "version" "4.6.2"
 
-"lodash@^4.17.15", "lodash@^4.17.21", "lodash@^4.17.4", "lodash@^4.7.0", "lodash@4.x":
+"lodash@^4.17.21", "lodash@^4.17.4", "lodash@^4.7.0", "lodash@4.x":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
   "resolved" "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   "version" "4.17.21"
