@@ -110,7 +110,7 @@ export class DeephavenView extends DOMWidgetView {
     const width = this.model.get('width');
     const height = this.model.get('height');
 
-    window.addEventListener('message', (event) => this.handleAuthentication(event));
+    window.addEventListener('message', this.handleAuthentication);
 
     log.info('init_element for widget', iframeUrl, width, height);
 
