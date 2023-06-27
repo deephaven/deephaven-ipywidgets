@@ -16,7 +16,6 @@ from uuid import uuid4
 from ._frontend import module_name, module_version
 import os
 import base64
-import json
 
 
 def _str_object_type(obj):
@@ -89,7 +88,7 @@ class DeephavenWidget(DOMWidget):
             })
 
             port = deephaven_object.session.port
-            server_url = f"https://{deephaven_object.session.host}:{port}"
+            server_url = deephaven_object.session.pqinfo.state.connectionDetails.staticUrl
 
             session.bind_table(object_id, deephaven_object)
         else:
