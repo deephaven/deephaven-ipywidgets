@@ -88,7 +88,7 @@ class DeephavenWidget(DOMWidget):
             })
 
             port = deephaven_object.session.port
-            server_url = deephaven_object.session.pqinfo.state.connectionDetails.staticUrl
+            server_url = deephaven_object.session.pqinfo().state.connectionDetails.staticUrl
 
             session.bind_table(object_id, deephaven_object)
         else:
