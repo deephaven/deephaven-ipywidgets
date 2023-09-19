@@ -7,15 +7,17 @@
 """
 Module for displaying Deephaven widgets within interactive python environments.
 """
+from __future__ import annotations
 
 import __main__
 from ipywidgets import DOMWidget
-from traitlets import Unicode, Integer, Bytes
+from traitlets import Unicode, Integer, Bytes, Bool
 from deephaven_server import Server
 from uuid import uuid4
 from ._frontend import module_name, module_version
 import os
 import base64
+import atexit
 
 
 def _str_object_type(obj):
@@ -33,6 +35,15 @@ def _path_for_object(obj):
         return 'chart'
     raise TypeError(f"Unknown object type: {name}")
 
+
+def _cleanup(widget: DeephavenWidget):
+    """
+    Remove the widget when the kernel is shutdown
+
+    Args:
+        widget (DeephavenWidget): The widget to remove
+    """
+    widget.set_trait('kernel_active', False)
 
 
 class DeephavenWidget(DOMWidget):
@@ -52,6 +63,7 @@ class DeephavenWidget(DOMWidget):
     width = Integer().tag(sync=True)
     height = Integer().tag(sync=True)
     token = Unicode().tag(sync=True)
+    kernel_active = Bool().tag(sync=True)
 
     def __init__(self, deephaven_object, height=600, width=0):
         """Create a Deephaven widget for displaying in an interactive Python console.
@@ -122,3 +134,6 @@ class DeephavenWidget(DOMWidget):
         self.set_trait('width', width)
         self.set_trait('height', height)
         self.set_trait('token', token)
+        self.set_trait('kernel_active', True)
+
+        atexit.register(_cleanup, self)

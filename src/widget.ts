@@ -104,13 +104,32 @@ export class DeephavenView extends DOMWidgetView {
     }
   };
 
+  //@ts-ignore
+  onDisconnect = (type): void => {
+    log.info(`Kernel ${type}, removing iframe`);
+    this.iframe.remove();
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render(): any {
     const iframeUrl = this.model.get('iframe_url');
     const width = this.model.get('width');
     const height = this.model.get('height');
+    let removed = false;
 
     window.addEventListener('message', this.handleAuthentication);
+
+    //@ts-ignore
+    const context = this.model.widget_manager._context;
+
+    this.model.on('change:kernel_active', () => this.onDisconnect("exiting"), this)
+
+    context.sessionContext.statusChanged.connect((sender: any, args: string) => {
+      if (args === "restarting" || args === "terminating" && !removed) {
+        this.onDisconnect(args);
+        removed = true;
+      }
+    })
 
     log.info('init_element for widget', iframeUrl, width, height);
 
