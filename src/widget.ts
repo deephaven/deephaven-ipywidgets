@@ -131,8 +131,7 @@ export class DeephavenView extends DOMWidgetView {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onRestartOrTerminate = (sender: any, args: string) => {
+  onRestartOrTerminate = (sender: unknown, args: string) => {
     if (args === 'restarting' || args === 'terminating') {
       this.onDisconnect(args);
     }
