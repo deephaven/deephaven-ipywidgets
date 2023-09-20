@@ -56,6 +56,33 @@ export class DeephavenModel extends DOMWidgetModel {
 export class DeephavenView extends DOMWidgetView {
   private iframe: HTMLIFrameElement;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private context: any;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(options: any) {
+    super(options);
+
+    this.model.on(
+      'change:kernel_active',
+      () => this.onDisconnect('exiting'),
+      this
+    );
+
+    // This uses the private _context property, but it's the only way to get
+    // the session context. These context listeners are used to listen to
+    // kernel events. See this file for examples within jupyter kernel:
+    // https://github.com/jupyter-widgets/ipywidgets/blob/47058a373d2c2b3acf101677b2745e14b76dd74b/python/jupyterlab_widgets/src/manager.ts#L427
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line no-underscore-dangle
+    this.context = this.model.widget_manager._context;
+    this.context.sessionContext.statusChanged.connect(
+      this.onRestartOrTerminate,
+      this
+    );
+  }
+
   sendAuthenticationResponse = (
     messageId: string,
     childWindow: WindowProxy,
@@ -104,36 +131,37 @@ export class DeephavenView extends DOMWidgetView {
     }
   };
 
-  //@ts-ignore
-  onDisconnect = (type): void => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onRestartOrTerminate = (sender: any, args: string) => {
+    if (args === 'restarting' || args === 'terminating') {
+      this.onDisconnect(args);
+    }
+  };
+
+  onDisconnect = (type: string): void => {
     log.info(`Kernel ${type}, removing iframe`);
     this.iframe.remove();
-  }
+
+    this.model.off('change:kernel_active');
+    this.context.sessionContext.statusChanged.disconnect(
+      this.onRestartOrTerminate,
+      this
+    );
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   render(): any {
     const iframeUrl = this.model.get('iframe_url');
     const width = this.model.get('width');
     const height = this.model.get('height');
-    let removed = false;
 
     window.addEventListener('message', this.handleAuthentication);
-
-    //@ts-ignore
-    const context = this.model.widget_manager._context;
-
-    this.model.on('change:kernel_active', () => this.onDisconnect("exiting"), this)
-
-    context.sessionContext.statusChanged.connect((sender: any, args: string) => {
-      if (args === "restarting" || args === "terminating" && !removed) {
-        this.onDisconnect(args);
-        removed = true;
-      }
-    })
 
     log.info('init_element for widget', iframeUrl, width, height);
 
     this.iframe = document.createElement('iframe');
+    this.iframe.allow = 'clipboard-write';
+
     this.iframe.src = iframeUrl;
     if (width > 0) {
       this.iframe.width = width;
