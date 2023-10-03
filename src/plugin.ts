@@ -2,10 +2,10 @@
 // Distributed under the terms of the Modified BSD License.
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Application, IPlugin } from '@phosphor/application';
+import { Application, IPlugin } from '@lumino/application';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Widget } from '@phosphor/widgets';
+import { Widget } from '@lumino/widgets';
 
 import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
 
