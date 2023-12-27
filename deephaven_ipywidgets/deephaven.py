@@ -91,20 +91,25 @@ class DeephavenWidget(DOMWidget):
         if _str_object_type(deephaven_object) == "pydeephaven.table.Table":
             session = deephaven_object.session
 
-            envoy_prefix = session._extra_headers[b"envoy-prefix"].decode("ascii")
-
-            token = base64.b64encode(
-                session.session_manager.auth_client.get_token(
-                    "RemoteQueryProcessor"
-                ).SerializeToString()
-            ).decode("us-ascii")
-
-            params.update({"authProvider": "parent", "envoyPrefix": envoy_prefix})
+            if b"envoy-prefix" in session._extra_headers:
+                params["envoyPrefix"] = session._extra_headers[b"envoy-prefix"].decode(
+                    "ascii"
+                )
 
             port = deephaven_object.session.port
-            server_url = (
-                deephaven_object.session.pqinfo().state.connectionDetails.staticUrl
-            )
+            server_url = f"http://localhost:{port}/"
+
+            if hasattr(session, "session_manager"):
+                params["authProvider"] = "parent"
+                # We have a DnD session, and we can get the authentication and connection details from the session manager
+                token = base64.b64encode(
+                    session.session_manager.auth_client.get_token(
+                        "RemoteQueryProcessor"
+                    ).SerializeToString()
+                ).decode("us-ascii")
+                server_url = (
+                    deephaven_object.session.pqinfo().state.connectionDetails.staticUrl
+                )
 
             session.bind_table(object_id, deephaven_object)
         else:
