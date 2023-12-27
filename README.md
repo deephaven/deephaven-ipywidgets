@@ -24,9 +24,9 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] deephaven-ipywidg
 First you'll need to start the [Deephaven server](https://github.com/deephaven/deephaven-core/blob/d73ef01cdf6fda43f7d03110995add26d16d4eae/py/embedded-server/README.md).
 
 ```python
-# Start up the Deephaven Server
+# Start up the Deephaven Server on port 8080 with token `iris`
 from deephaven_server import Server
-s = Server(port=8080)
+s = Server(port=8080, jvm_args=["-Dauthentication.psk=iris"])
 s.start()
 ```
 
@@ -50,11 +50,14 @@ display(DeephavenWidget(t, width=100, height=250))
 ```
 
 ### Alternate Deephaven Server URL
-By default, the Deephaven server is located at `http://localhost:{port}`, where `{port}` is the port set in the Deephaven server creation call. If the server is not there, such as when running a Jupyter notebook in a Docker container, modify the `DEEPHAVEN_IPY_URL` environmental variable to the correct URL before creating a `DeephavenWidget`. 
+
+By default, the Deephaven server is located at `http://localhost:{port}`, where `{port}` is the port set in the Deephaven server creation call. If the server is not there, such as when running a Jupyter notebook in a Docker container, modify the `DEEPHAVEN_IPY_URL` environmental variable to the correct URL before creating a `DeephavenWidget`.
+
 ```python
-import os 
+import os
 os.environ["DEEPHAVEN_IPY_URL"] = "http://localhost:1234"
 ```
+
 ## Development Installation
 
 Before starting, you will need [python3](https://www.python.org/downloads/), [node](https://nodejs.org/en/download/), and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) installed.
