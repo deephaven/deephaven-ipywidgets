@@ -60,7 +60,7 @@ export class DeephavenView extends DOMWidgetView {
   private context: any;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(options: any) {
+  constructor(options: Backbone.ViewOptions<DeephavenModel>) {
     super(options);
 
     this.model.on(
@@ -131,7 +131,7 @@ export class DeephavenView extends DOMWidgetView {
     }
   };
 
-  onRestartOrTerminate = (sender: unknown, args: string) => {
+  onRestartOrTerminate = (sender: unknown, args: string): void => {
     if (args === 'restarting' || args === 'terminating') {
       this.onDisconnect(args);
     }
