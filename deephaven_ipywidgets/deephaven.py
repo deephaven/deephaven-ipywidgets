@@ -29,11 +29,17 @@ def _path_for_object(obj):
     """Return the iframe path for the specified object. Inspects the class name to determine."""
     name = _str_object_type(obj)
 
-    if name in ('deephaven.table.Table', 'pandas.core.frame.DataFrame', 'pydeephaven.table.Table'):
-        return 'table'
-    if name == 'deephaven.plot.figure.Figure':
-        return 'chart'
-    raise TypeError(f"Unknown object type: {name}")
+    if name in (
+        "deephaven.table.Table",
+        "pandas.core.frame.DataFrame",
+        "pydeephaven.table.Table",
+    ):
+        return "table"
+    if name == "deephaven.plot.figure.Figure":
+        return "chart"
+
+    # No special handling for this type, just try it as a widget
+    return "widget"
 
 
 def _cleanup(widget: DeephavenWidget):
@@ -43,16 +49,16 @@ def _cleanup(widget: DeephavenWidget):
     Args:
         widget (DeephavenWidget): The widget to remove
     """
-    widget.set_trait('kernel_active', False)
+    widget.set_trait("kernel_active", False)
 
 
 class DeephavenWidget(DOMWidget):
-    """A wrapper for viewing DeephavenWidgets in IPython
-    """
-    _model_name = Unicode('DeephavenModel').tag(sync=True)
+    """A wrapper for viewing DeephavenWidgets in IPython"""
+
+    _model_name = Unicode("DeephavenModel").tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
-    _view_name = Unicode('DeephavenView').tag(sync=True)
+    _view_name = Unicode("DeephavenView").tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
@@ -78,29 +84,27 @@ class DeephavenWidget(DOMWidget):
         # Generate a new table ID using a UUID prepended with a `t_` prefix
         object_id = f"t_{str(uuid4()).replace('-', '_')}"
 
-        params = {
-            "name": object_id
-        }
+        params = {"name": object_id}
 
-        token = ''
+        token = ""
 
-        if _str_object_type(deephaven_object) == 'pydeephaven.table.Table':
+        if _str_object_type(deephaven_object) == "pydeephaven.table.Table":
             session = deephaven_object.session
 
-            envoy_prefix = session._extra_headers[
-                b'envoy-prefix'].decode('ascii')
+            envoy_prefix = session._extra_headers[b"envoy-prefix"].decode("ascii")
 
             token = base64.b64encode(
-                session.session_manager.auth_client.get_token("RemoteQueryProcessor").SerializeToString()
-            ).decode('us-ascii')
+                session.session_manager.auth_client.get_token(
+                    "RemoteQueryProcessor"
+                ).SerializeToString()
+            ).decode("us-ascii")
 
-            params.update({
-                "authProvider": "parent",
-                "envoyPrefix": envoy_prefix
-            })
+            params.update({"authProvider": "parent", "envoyPrefix": envoy_prefix})
 
             port = deephaven_object.session.port
-            server_url = deephaven_object.session.pqinfo().state.connectionDetails.staticUrl
+            server_url = (
+                deephaven_object.session.pqinfo().state.connectionDetails.staticUrl
+            )
 
             session.bind_table(object_id, deephaven_object)
         else:
@@ -115,6 +119,7 @@ class DeephavenWidget(DOMWidget):
 
         try:
             from google.colab.output import eval_js
+
             server_url = eval_js(f"google.colab.kernel.proxyPort({port})")
         except ImportError:
             pass
@@ -123,17 +128,19 @@ class DeephavenWidget(DOMWidget):
             server_url = f"{server_url}/"
 
         # Generate the iframe_url from the object type
-        iframe_url = f"{server_url}iframe/{_path_for_object(deephaven_object)}/{param_string}"
+        iframe_url = (
+            f"{server_url}iframe/{_path_for_object(deephaven_object)}/{param_string}"
+        )
         # Add the table to the main modules globals list so it can be retrieved by the iframe
         __main__.__dict__[object_id] = deephaven_object
 
-        self.set_trait('server_url', server_url)
-        self.set_trait('iframe_url', iframe_url)
-        self.set_trait('object_id', object_id)
-        self.set_trait('object_type', _str_object_type(deephaven_object))
-        self.set_trait('width', width)
-        self.set_trait('height', height)
-        self.set_trait('token', token)
-        self.set_trait('kernel_active', True)
+        self.set_trait("server_url", server_url)
+        self.set_trait("iframe_url", iframe_url)
+        self.set_trait("object_id", object_id)
+        self.set_trait("object_type", _str_object_type(deephaven_object))
+        self.set_trait("width", width)
+        self.set_trait("height", height)
+        self.set_trait("token", token)
+        self.set_trait("kernel_active", True)
 
         atexit.register(_cleanup, self)
