@@ -62,8 +62,6 @@ class DeephavenWidget(DOMWidget):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
-    object_id = Unicode().tag(sync=True)
-    object_type = Unicode().tag(sync=True)
     server_url = Unicode().tag(sync=True)
     iframe_url = Unicode().tag(sync=True)
     width = Integer().tag(sync=True)
@@ -71,24 +69,36 @@ class DeephavenWidget(DOMWidget):
     token = Unicode().tag(sync=True)
     kernel_active = Bool().tag(sync=True)
 
-    def __init__(self, deephaven_object, height=600, width=0):
+    def __init__(self, deephaven_object, height=600, width=0, session=None):
         """Create a Deephaven widget for displaying in an interactive Python console.
 
         Args:
-            deephaven_object (Table): the Deephaven object to display
+            deephaven_object (deephaven.table.Table | pandas.core.frame.DataFrame | pydeephaven.table.Table | str): the Deephaven object to display, or the name of the object if using pydeephaven
             height (int): the height of the table
             width (int): the width of the table. Set to 0 to take up full width of notebook.
+            session (pydeephaven.session.Session): the session to load the table from. Required only if using a remote pydeephaven object by name.
         """
         super(DeephavenWidget, self).__init__()
 
         # Generate a new table ID using a UUID prepended with a `t_` prefix
-        object_id = f"t_{str(uuid4()).replace('-', '_')}"
+        object_id = (
+            deephaven_object
+            if isinstance(deephaven_object, str)
+            else f"_{str(uuid4()).replace('-', '_')}"
+        )
 
         params = {"name": object_id}
-
+        port = 10000
         token = ""
 
-        if _str_object_type(deephaven_object) == "pydeephaven.table.Table":
+        if isinstance(deephaven_object, str):
+            if session is None:
+                raise ValueError(
+                    "session must be specified when using a remote pydeephaven object by name"
+                )
+            port = session.port
+            server_url = f"http://{session.host}:{port}/"
+        elif _str_object_type(deephaven_object) == "pydeephaven.table.Table":
             session = deephaven_object.session
 
             if b"envoy-prefix" in session._extra_headers:
@@ -97,7 +107,7 @@ class DeephavenWidget(DOMWidget):
                 )
 
             port = deephaven_object.session.port
-            server_url = f"http://localhost:{port}/"
+            server_url = f"http://{deephaven_object.session.host}:{port}/"
 
             if hasattr(session, "session_manager"):
                 params["authProvider"] = "parent"
@@ -115,6 +125,9 @@ class DeephavenWidget(DOMWidget):
         else:
             port = Server.instance.port
             server_url = f"http://localhost:{port}/"
+
+            # Add the table to the main modules globals list so it can be retrieved by the iframe
+            __main__.__dict__[object_id] = deephaven_object
 
         param_values = [f"{k}={v}" for k, v in params.items()]
         param_string = "?" + "&".join(param_values)
@@ -136,13 +149,9 @@ class DeephavenWidget(DOMWidget):
         iframe_url = (
             f"{server_url}iframe/{_path_for_object(deephaven_object)}/{param_string}"
         )
-        # Add the table to the main modules globals list so it can be retrieved by the iframe
-        __main__.__dict__[object_id] = deephaven_object
 
         self.set_trait("server_url", server_url)
         self.set_trait("iframe_url", iframe_url)
-        self.set_trait("object_id", object_id)
-        self.set_trait("object_type", _str_object_type(deephaven_object))
         self.set_trait("width", width)
         self.set_trait("height", height)
         self.set_trait("token", token)
