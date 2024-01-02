@@ -20,6 +20,10 @@ import base64
 import atexit
 
 
+TABLE_TYPES = ("deephaven.table.Table", "pandas.core.frame.DataFrame", "pydeephaven.table.Table")
+FIGURE_TYPES = ("deephaven.plot.figure.Figure")
+
+
 def _str_object_type(obj):
     """Returns the object type as a string value"""
     return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
@@ -29,13 +33,9 @@ def _path_for_object(obj):
     """Return the iframe path for the specified object. Inspects the class name to determine."""
     name = _str_object_type(obj)
 
-    if name in (
-        "deephaven.table.Table",
-        "pandas.core.frame.DataFrame",
-        "pydeephaven.table.Table",
-    ):
+    if name in TABLE_TYPES:
         return "table"
-    if name == "deephaven.plot.figure.Figure":
+    if name in FIGURE_TYPES:
         return "chart"
 
     # No special handling for this type, just try it as a widget
