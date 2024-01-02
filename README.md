@@ -135,6 +135,13 @@ After a change wait for the build to finish and then refresh your browser and th
 
 If you make a change to the python code then you will need to restart the notebook kernel to have it take effect.
 
+### Testing your changes
+
+There are separate test suites for the python and TypeScript code.
+
+- **Python:** To run the python tests, run `pytest` in the root directory of the repository.
+- **TypeScript:** To run the TypeScript tests, run `yarn run lint:check` in the root directory of the repository to run the `eslint` tests. Then run `yarn run test` to run the rest of the unit tests.
+
 ## Releasing your initial packages:
 
 - Add tests
