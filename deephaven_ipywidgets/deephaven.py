@@ -20,8 +20,8 @@ import base64
 import atexit
 
 
-TABLE_TYPES = ("deephaven.table.Table", "pandas.core.frame.DataFrame", "pydeephaven.table.Table")
-FIGURE_TYPES = ("deephaven.plot.figure.Figure")
+TABLE_TYPES = {"deephaven.table.Table", "pandas.core.frame.DataFrame", "pydeephaven.table.Table"}
+FIGURE_TYPES = {"deephaven.plot.figure.Figure"}
 
 
 def _str_object_type(obj):
