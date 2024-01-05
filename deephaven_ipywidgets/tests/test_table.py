@@ -20,4 +20,4 @@ def test_example_creation_blank(MockTableClass):
     mock_table.__class__.__name__ = 'Table'
     w = DeephavenWidget(mock_table)
     assert w.server_url == 'http://localhost:9876/'
-    assert str(w.iframe_url).startswith('http://localhost:9876/iframe/table/?name=t_')
+    assert str(w.iframe_url).startswith('http://localhost:9876/iframe/table/?name=_')
