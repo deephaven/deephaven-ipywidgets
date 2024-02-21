@@ -10,6 +10,8 @@ Module for displaying Deephaven widgets within interactive python environments.
 from __future__ import annotations
 
 import __main__
+from typing import Any
+
 from ipywidgets import DOMWidget
 from traitlets import Unicode, Integer, Bytes, Bool
 from deephaven_server import Server
@@ -18,7 +20,6 @@ from ._frontend import module_name, module_version
 import os
 import base64
 import atexit
-
 
 TABLE_TYPES = {"deephaven.table.Table", "pandas.core.frame.DataFrame", "pydeephaven.table.Table"}
 FIGURE_TYPES = {"deephaven.plot.figure.Figure"}
@@ -50,6 +51,44 @@ def _cleanup(widget: DeephavenWidget):
         widget (DeephavenWidget): The widget to remove
     """
     widget.set_trait("kernel_active", False)
+
+
+def _check_session(session: Any, params: dict):
+    """
+    Check the session for a session manager and set the parameters for the widget
+
+    Args:
+        session: The session to check
+        params: The parameters to set
+
+    Returns:
+        str, str: The server URL and token to use
+
+    """
+
+    token = ""
+
+    port = session.port
+    server_url = f"http://{session.host}:{port}/"
+
+    if hasattr(session, "_extra_headers") and b"envoy-prefix" in session._extra_headers:
+        params["envoyPrefix"] = session._extra_headers[b"envoy-prefix"].decode(
+            "ascii"
+        )
+
+    if hasattr(session, "session_manager"):
+        params["authProvider"] = "parent"
+        # We have a DnD session, and we can get the authentication and connection details from the session manager
+        token = base64.b64encode(
+            session.session_manager.auth_client.get_token(
+                "RemoteQueryProcessor"
+            ).SerializeToString()
+        ).decode("us-ascii")
+        server_url = (
+            session.pqinfo().state.connectionDetails.staticUrl
+        )
+
+    return server_url, token
 
 
 class DeephavenWidget(DOMWidget):
@@ -96,30 +135,13 @@ class DeephavenWidget(DOMWidget):
                 raise ValueError(
                     "session must be specified when using a remote pydeephaven object by name"
                 )
-            port = session.port
-            server_url = f"http://{session.host}:{port}/"
+
+            server_url, token = _check_session(session, params)
+
         elif _str_object_type(deephaven_object) == "pydeephaven.table.Table":
             session = deephaven_object.session
 
-            if b"envoy-prefix" in session._extra_headers:
-                params["envoyPrefix"] = session._extra_headers[b"envoy-prefix"].decode(
-                    "ascii"
-                )
-
-            port = deephaven_object.session.port
-            server_url = f"http://{deephaven_object.session.host}:{port}/"
-
-            if hasattr(session, "session_manager"):
-                params["authProvider"] = "parent"
-                # We have a DnD session, and we can get the authentication and connection details from the session manager
-                token = base64.b64encode(
-                    session.session_manager.auth_client.get_token(
-                        "RemoteQueryProcessor"
-                    ).SerializeToString()
-                ).decode("us-ascii")
-                server_url = (
-                    deephaven_object.session.pqinfo().state.connectionDetails.staticUrl
-                )
+            server_url, token = _check_session(session, params)
 
             session.bind_table(object_id, deephaven_object)
         else:
