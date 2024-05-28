@@ -52,6 +52,3 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-        with:
-          user: __token__
-          password: ${{ secrets.DEEPHAVENIPYWIDGETS_PYPI_TOKEN }}
