@@ -117,7 +117,8 @@ export class DeephavenView extends DOMWidgetView {
     if (
       source == null ||
       source instanceof MessagePort ||
-      source instanceof ServiceWorker ||
+      (typeof ServiceWorker !== 'undefined' &&
+        source instanceof ServiceWorker) ||
       source !== this.iframe.contentWindow
     ) {
       log.debug('Ignore message, invalid event source', source);
