@@ -4,10 +4,17 @@ Deephaven Community IPython Widget Library
 
 ## Installation
 
-You can install using `pip`:
+You can install using `pip`. 
 
+If running with the embedded server, install with the following:
+```shell
+pip install "deephaven-ipywidgets[server]"
+```
+This installs the embedded server.
+
+If connecting to a server running elsewhere, install with the following:
 ```bash
-pip install deephaven-ipywidgets
+pip install "deephaven-ipywidgets[client]"
 ```
 
 If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
@@ -21,7 +28,7 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] deephaven-ipywidg
 
 ### Starting the server
 
-First you'll need to start the [Deephaven server](https://github.com/deephaven/deephaven-core/blob/d73ef01cdf6fda43f7d03110995add26d16d4eae/py/embedded-server/README.md).
+First, if you are using the embedded server, you'll need to start the [Deephaven server](https://github.com/deephaven/deephaven-core/blob/d73ef01cdf6fda43f7d03110995add26d16d4eae/py/embedded-server/README.md).
 
 ```python
 # Start up the Deephaven Server on port 8080 with token `iris`
@@ -47,6 +54,35 @@ You can also pass in the size you would like the widget to be:
 ```python
 # Specify a size for the table
 display(DeephavenWidget(t, width=100, height=250))
+```
+
+### Connecting to a Remote Server
+
+If you are using the client to connect to an already running server, create a `pydeephaven` session.
+See the [pydeephaven documentation](https://deephaven.io/core/docs/tutorials/pyclient-quickstart/) for more information.
+```python
+from pydeephaven import Session
+
+client_session = Session(
+    host="deephaven.local",
+    port=10000,
+    auth_type="io.deephaven.authentication.psk.PskAuthenticationHandler",
+    auth_token="YOUR_PASSWORD_HERE",
+)
+```
+
+### Displaying Tables from a Remote Server
+
+The session can be used to create objects such as tables on the server and then display them in the widget.
+```python
+t = client_session.time_table("PT1s")
+from deephaven_ipywidgets import DeephavenWidget
+display(DeephavenWidget(t))
+```
+
+You can also reference objects already created on the server. This code assumes a table named `t` exists on the server.
+```python
+display(DeephavenWidget("t", session=client_session))
 ```
 
 ### Alternate Deephaven Server URL
