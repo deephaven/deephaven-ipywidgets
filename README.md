@@ -6,7 +6,7 @@ Deephaven Community IPython Widget Library
 
 You can install using `pip`. 
 
-If running with the embedded server, install with the following:
+If running with the embedded server (`deephaven-server`), install with the following:
 ```shell
 pip install "deephaven-ipywidgets[server]"
 ```
