@@ -93,7 +93,7 @@ setup_args = dict(
     ],
     include_package_data=True,
     python_requires=">=3.6",
-    install_requires=["ipywidgets>=8.0.0,<9", "deephaven-server>=0.31.0"],
+    install_requires=["ipywidgets>=8.0.0,<9"],
     extras_require={
         "test": [
             "pytest>=4.6",
@@ -102,6 +102,8 @@ setup_args = dict(
         ],
         "examples": [
             # Any requirements for the examples to run
+            "deephaven-server>=0.31.0",
+            "pydeephaven",
         ],
         "docs": [
             "jupyter_sphinx",
@@ -113,6 +115,12 @@ setup_args = dict(
             "sphinx>=1.5",
             "sphinx_rtd_theme",
         ],
+        "server": [
+            "deephaven-server>=0.31.0",
+        ],
+        "client": [
+            "pydeephaven"
+        ]
     },
     entry_points={},
 )

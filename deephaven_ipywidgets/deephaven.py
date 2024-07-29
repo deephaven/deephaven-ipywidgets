@@ -14,7 +14,6 @@ from typing import Any
 
 from ipywidgets import DOMWidget
 from traitlets import Unicode, Integer, Bytes, Bool
-from deephaven_server import Server
 from uuid import uuid4
 from ._frontend import module_name, module_version
 import os
@@ -145,6 +144,7 @@ class DeephavenWidget(DOMWidget):
 
             session.bind_table(object_id, deephaven_object)
         else:
+            from deephaven_server import Server
             port = Server.instance.port
             server_url = f"http://localhost:{port}/"
 
