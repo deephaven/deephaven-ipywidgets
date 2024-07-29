@@ -12,7 +12,7 @@ pip install "deephaven-ipywidgets[server]"
 ```
 This installs the embedded server.
 
-If connecting to a server running elsewhere, install with the following:
+If connecting to a server running elsewhere (`pydeephaven`), install with the following:
 ```bash
 pip install "deephaven-ipywidgets[client]"
 ```
