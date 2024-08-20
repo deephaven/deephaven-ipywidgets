@@ -138,11 +138,17 @@ class DeephavenWidget(DOMWidget):
             server_url, token = _check_session(session, params)
 
         elif _str_object_type(deephaven_object) == "pydeephaven.table.Table":
+            from pydeephaven.session import SharedTicket
             session = deephaven_object.session
 
             server_url, token = _check_session(session, params)
 
-            session.bind_table(object_id, deephaven_object)
+            # h/ is the prefix for shared tickets used by the server
+            ticket = SharedTicket(b"h/" + object_id.encode("utf-8"))
+            session.publish_table(ticket, deephaven_object)
+
+            params["type"] = "Table"
+            params["isShared"] = "true"
         else:
             from deephaven_server import Server
             port = Server.instance.port
